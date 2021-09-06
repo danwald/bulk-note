@@ -21,7 +21,7 @@ class IMIPayload(message.Payload):
             "<to>{self.to}</to>"
             '<content type="text">{self.content}</content>'
         )
-        if send_on_group:
+        if self.send_on_group:
             payload = f'{payload}<sendOnGroup value="{self.send_on_group}"/>'
         return f"{payload}</submitRequest>"
 
