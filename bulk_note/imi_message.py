@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from typing import Optional, List, Dict, io, NamedTuple
 from io import StringIO
+from itertools import islice
 
 import pytest
 from . import message
@@ -27,17 +28,24 @@ class IMIPayload(message.Payload):
         for to in self.numbers:
             payload.write(
                 (
-                    f'<submitRequest id="{CID_PREFIX}_{IMIPayload.cid:07}">'
+                    f'<xiamSMS><submitRequest id="{CID_PREFIX}_{IMIPayload.cid:07}">'
                     "<from>{FROM}</from>"
                     "<to>{to}</to>"
                     '<content type="text">{CONTENT}</content>'
+                    "<sendOnGroup"
+                    'value=""/>'
+                    '<requestDeliveryReport value="yes"/>'
+                    "</submitRequest></xiamSMS>"
                 )
             )
             IMIPayload.cid += 1
-            send_on_group = self.send_codes.get(to)
-            if send_on_group:
-                payload.write(f"{payload}<sendOnGroup" 'value="{self.send_on_group}"/>')
-        return f"<xiamSMS>{payload.getvalue()}</submitRequest></xiamSMS>"
+            # not using send group
+            # send_on_group = self.send_codes.get(to)
+            # if send_on_group:
+            #    payload.write(f"{payload}<sendOnGroup" 'value="{self.send_on_group}"/>')
+            # payload.write("</submitRequest>")
+            # payload = StringIO(f"<xiamSMS>{payload.getvalue()}</submitRequest></xiamSMS>")
+        return payload.getvalue()
 
 
 class Status:
@@ -143,7 +151,7 @@ class IMIRecipients:
         self.verbose = verbose
 
     def get_tx_payload(self) -> IMIPayload:
-        pass
+        return IMIPayload(islice(self.receipients, self.batch_size), self.send_groups)
 
     def get_retry_payload(self) -> IMIPayload:
         pass
