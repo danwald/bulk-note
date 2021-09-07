@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class IMIPayload(message.Payload):
     cid = 0
     numbers: List[str]
-    send_codes: Optional[Dict[str, str]] = None
+    send_codes: Dict[str, str]
 
     def dumps(self) -> str:
         payload = StringIO()
@@ -34,7 +34,7 @@ class IMIPayload(message.Payload):
                 )
             )
             IMIPayload.cid += 1
-            send_on_group = self.send_codes and self.send_codes.get(to)
+            send_on_group = self.send_codes.get(to)
             if send_on_group:
                 payload.write(f"{payload}<sendOnGroup" 'value="{self.send_on_group}"/>')
         return f"<xiamSMS>{payload.getvalue()}</submitRequest></xiamSMS>"
@@ -131,16 +131,22 @@ class IMIResponse(message.Response):
 
 class IMIRecipients:
     def __init__(
-        self, receipients: io.TextIO, send_groups: Optional[io.BinaryIO]
+        self,
+        receipients: io.TextIO,
+        send_groups: Optional[io.BinaryIO],
+        batch_size=10,
+        verbose=0,
     ) -> None:
         self.receipients = filter(None, (line.trim() for line in receipients))
         self.send_groups = pickle.load(send_groups) if send_groups else {}
+        self.batch_size = batch_size
+        self.verbose = verbose
 
-    def get_tx_payload(self, count: int = 1) -> IMIPayload:
+    def get_tx_payload(self) -> IMIPayload:
         pass
 
-    def get_retry_payload(self, count: int = 1) -> IMIPayload:
+    def get_retry_payload(self) -> IMIPayload:
         pass
 
-    def get_failure_payload(self, count: int = 1) -> IMIPayload:
+    def get_failure_payload(self) -> IMIPayload:
         pass
