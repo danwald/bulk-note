@@ -1,14 +1,23 @@
 """Console script for bulk_note."""
 import sys
 import click
+from .imi_message import IMIRecipients
 
 
 @click.command()
-def main(args=None):
-    """Console script for bulk_note."""
-    click.echo("Replace this message by putting your code into "
-               "bulk_note.cli.main")
-    click.echo("See click documentation at https://click.palletsprojects.com/")
+@click.option("--numbers", required=True, type=click.File("r"), help="file of numbers")
+@click.option(
+    "--send-codes",
+    type=click.File("rb"),
+    default=None,
+    help="file of pickled sendcodes",
+)
+@click.option("--bulk-size", default=10, help="batch size per send")
+@click.option("-v", "--verbose", count=True)
+def main(numbers, send_codes, bulk_size, verbose):
+    receipients = IMIRecipients(numbers, send_codes, bulk_size, verbose)
+    server_url = "https://74af928a-87c2-4a1e-8b5f-e23376aa9a83.mock.pstmn.io/"
+
     return 0
 
 
