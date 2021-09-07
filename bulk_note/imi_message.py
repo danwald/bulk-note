@@ -71,17 +71,21 @@ class IMIResponse(message.Response):
 
     def __init__(self, status_code, payload):
         self.status_code = status_code
-        self.reply = payload
+        self.payload = payload
         self.good = self.fail = self.retry = None
 
     def get_success(self) -> List[message.Outcome]:
         if self.good is None:
-            if self.status_code != requests.codes.OK:
+            root = ET.fromString(self.payload)
+            root_status = self.get_status(root)
+            if not any(
+                [self.status_code == requests.codes.OK, root_status.good_status()]
+            ):
                 self.good = []
                 return self.good
 
-            for response in ET.fromstring(self.reply):
-                client_id = response.text.trim()
+            for response in root:
+                client_message_id = response.text.trim()
                 for request in response:
                     number = request.text.trim()
                     status = self.get_status(request.attrib)
