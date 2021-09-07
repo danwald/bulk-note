@@ -48,7 +48,7 @@ class Status(NamedTuple):
 @dataclass
 class IMIResponse(message.Response):
     def get_status(status: Dict[str, str]) -> Status:
-        return Status(status["status"], status["statusCode"])
+        return Status(status["status"], status.get("statusCode", "0"))
 
     def good_status(status: Status) -> bool:
         return any([Status.status in set(["OK"]), Status.status_code in set(["0"])])
