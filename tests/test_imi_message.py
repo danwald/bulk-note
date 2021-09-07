@@ -38,6 +38,17 @@ def partial_good_imi_response():
     return imi_message.IMIResponse("OK", PARTIAL_SUCCESS_RESPONSE)
 
 
+@pytest.mark.parametrize(
+    "code, status, expected",
+    [("OK", "0", True), ("", "0", True), ("OK", "", True), ("FAIL", "0", False)],
+)
+def test_good_statuses(code, status, expected):
+    assert (
+        imi_message.IMIResponse.good_status(imi_message.Status(code, status))
+        == expected
+    )
+
+
 def test_impayload_full_dumps():
     payload = imi_message.IMIPayload(**PAYLOAD)
     print(f"{payload.dumps()}")
