@@ -1,3 +1,4 @@
+import logging
 import pickle
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -10,6 +11,8 @@ from . import message
 FROM = "+121212"
 CONTENT = "foo bar"
 CID_PREFIX = "2021-09-07"
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -78,8 +81,14 @@ class IMIResponse(message.Response):
                 return self.good
 
             for response in ET.fromstring(self.reply):
+                client_id = response.text.trim()
                 for request in response:
                     number = request.text.trim()
+                    status = self.get_status(request.attrib)
+                    if not self.good_status(status):
+                        logger.warning("Failed to send to %s (%s)", number, status)
+                        continue
+
         return self.good
 
     def get_fail(self) -> List[message.Outcome]:
