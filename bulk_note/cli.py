@@ -4,7 +4,7 @@ import click
 import requests
 from .imi_message import IMIRecipients, IMIResponse
 
-SERVER_URL = "https://74af928a-87c2-4a1e-8b5f-e23376aa9a83.mock.pstmn.io/txt-200"
+SERVER_URL = "https://74af928a-87c2-4a1e-8b5f-e23376aa9a83.mock.pstmn.io/txt-500"
 HEADERS = {"Content-type": "text/xml"}
 
 
@@ -26,6 +26,7 @@ def main(numbers, content, send_codes, bulk_size, verbose):
             while payload := receipients.get_tx_payload().dumps():
                 try:
                     resp = requests.post(SERVER_URL, data=payload, headers=HEADERS)
+                    resp.raise_for_status()
                     print("Sent bulk")
                 except requests.HTTPError as e:
                     print(f"Except when sending Failed to send request {e}")
