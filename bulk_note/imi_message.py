@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import Optional, List, Dict, io, NamedTuple
 from io import StringIO
 
-import requests
+import pytest
 from . import message
 
 FROM = "+121212"
@@ -42,33 +42,38 @@ class IMIPayload(message.Payload):
 
 class Status(NamedTuple):
     status: str
-    status_code: str
+    status_code: str = "0"
+
+    @property
+    def good(self) -> bool:
+        if self.status == "FAIL":
+            return False
+        else:
+            return any([self.status in set(["OK"]), self.status_code in set(["0"])])
+
+    @property
+    def retry(self) -> bool:
+        return all(
+            [self.status in set(["FAIL"]), self.status_code in set(["9", "10", "1039"])]
+        )
+
+    @property
+    def bad(self) -> bool:
+        return not all([self.good, self.retry])
+
+    @property
+    def unsubscribe(self) -> bool:
+        return self.status_code in set(["88", "1050"])
+
+
+class IMIOutcome(Status, message.Outcome):
+    number: str
+    client_message_id: str = ""
+    imi_message_id: str = ""
 
 
 @dataclass
 class IMIResponse(message.Response):
-    def get_status(status: Dict[str, str]) -> Status:
-        return Status(status["status"], status.get("statusCode", "0"))
-
-    def good_status(status: Status) -> bool:
-        return any([Status.status in set(["OK"]), Status.status_code in set(["0"])])
-
-    def retry_status(status: Status) -> bool:
-        return all(
-            [
-                Status.status in set(["FAIL"]),
-                Status.status_code in set(["9", "10", "1039"]),
-            ]
-        )
-
-    def bad_status(status: Status) -> bool:
-        return not all(
-            [IMIResponse.good_status(status), IMIResponse.retry_status(status)]
-        )
-
-    def unsub_status(status: Status) -> bool:
-        return status.status_code in set(["88", "1050"])
-
     def __init__(self, status_code, payload):
         self.status_code = status_code
         self.payload = payload
@@ -76,26 +81,31 @@ class IMIResponse(message.Response):
 
     def get_success(self) -> List[message.Outcome]:
         if self.good is None:
+            self.good = []
             root = ET.fromstring(self.payload)
-            root_status = IMIResponse.get_status(root.attrib)
-            if not any(
-                [
-                    self.status_code == requests.codes.OK,
-                    IMIResponse.good_status(root_status),
-                ]
-            ):
-                self.good = []
+            root_status = Status(root.attrib)
+            if not any([self.status_code == "OK", root_status.good]):
                 return self.good
 
             for response in root:
-                client_message_id = response.text.trim()
+                client_message_id = response.attrib.get("id").strip()
                 for request in response:
-                    number = request.text.trim()
-                    status = IMIResponse.get_status(request.attrib)
-                    if not IMIResponse.good_status(status):
-                        logger.warning("Failed to send to %s (%s)", number, status)
+                    number = request.text.strip()
+                    request_status = Status(**request.attrib)
+                    imi_message_id = request.attrib.get("id")
+                    if not request_status.good:
+                        logger.warning(
+                            "Failed to send to %s (%s)", number, request_status
+                        )
                         continue
-
+                    self.good.append(
+                        IMIOutcome(
+                            **request_status,
+                            number=number,
+                            client_message_id=client_message_id,
+                            imi_message_id=imi_message_id,
+                        )
+                    )
         return self.good
 
     def get_fail(self) -> List[message.Outcome]:
