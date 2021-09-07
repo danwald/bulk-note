@@ -25,18 +25,16 @@ class IMIPayload(message.Payload):
 
     def dumps(self) -> str:
         payload = StringIO()
-
         for to in self.numbers:
             payload.write(
                 (
-                    f'<xiamSMS><submitRequest id="{CID_PREFIX}_{IMIPayload.cid:07}">'
-                    "<from>{FROM}</from>"
-                    "<to>{to}</to>"
-                    '<content type="text">{CONTENT}</content>'
-                    "<sendOnGroup"
-                    'value=""/>'
-                    '<requestDeliveryReport value="yes"/>'
-                    "</submitRequest></xiamSMS>"
+                    f'<submitRequest id="{CID_PREFIX}_{IMIPayload.cid:07}">'
+                    f"<from>{FROM}</from>"
+                    f"<to>{to}</to>"
+                    f'<content type="text">{self.content}</content>'
+                    f'<sendOnGroup value=""/>'
+                    f'<requestDeliveryReport value="yes"/>'
+                    f"</submitRequest>"
                 )
             )
             IMIPayload.cid += 1
@@ -46,7 +44,8 @@ class IMIPayload(message.Payload):
             #    payload.write(f"{payload}<sendOnGroup" 'value="{self.send_on_group}"/>')
             # payload.write("</submitRequest>")
             # payload = StringIO(f"<xiamSMS>{payload.getvalue()}</submitRequest></xiamSMS>")
-        return payload.getvalue()
+        payload = payload.getvalue()
+        return f"<xiamSMS>{payload}</xiamSMS>" if payload else ""
 
 
 class Status:
