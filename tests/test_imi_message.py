@@ -43,10 +43,7 @@ def partial_good_imi_response():
     [("OK", "0", True), ("", "0", True), ("OK", "", True), ("FAIL", "0", False)],
 )
 def test_good_statuses(code, status, expected):
-    assert (
-        imi_message.IMIResponse.good_status(imi_message.Status(code, status))
-        == expected
-    )
+    assert imi_message.Status(code, status).good == expected
 
 
 def test_impayload_full_dumps():

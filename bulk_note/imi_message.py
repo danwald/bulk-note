@@ -40,9 +40,10 @@ class IMIPayload(message.Payload):
         return f"<xiamSMS>{payload.getvalue()}</submitRequest></xiamSMS>"
 
 
-class Status(NamedTuple):
-    status: str
-    status_code: str = "0"
+class Status:
+    def __init__(self, status: str = "", status_code: str = "0", **kwargs):
+        self.status = status
+        self.status_code = status_code
 
     @property
     def good(self) -> bool:
@@ -67,9 +68,17 @@ class Status(NamedTuple):
 
 
 class IMIOutcome(Status, message.Outcome):
-    number: str
-    client_message_id: str = ""
-    imi_message_id: str = ""
+    def __init__(
+        self,
+        number: str = "",
+        client_message_id: str = "",
+        imi_message_id: str = "",
+        **kwargs,
+    ):
+        self.number = number
+        self.client_message_id = client_message_id
+        self.imi_message_id = imi_message_id
+        super().__init__(**kwargs)
 
 
 @dataclass
@@ -83,7 +92,7 @@ class IMIResponse(message.Response):
         if self.good is None:
             self.good = []
             root = ET.fromstring(self.payload)
-            root_status = Status(root.attrib)
+            root_status = Status(root.attrib.get("status"))
             if not any([self.status_code == "OK", root_status.good]):
                 return self.good
 
@@ -100,10 +109,11 @@ class IMIResponse(message.Response):
                         continue
                     self.good.append(
                         IMIOutcome(
-                            **request_status,
                             number=number,
                             client_message_id=client_message_id,
                             imi_message_id=imi_message_id,
+                            status=request_status.status,
+                            status_code=request_status.status_code,
                         )
                     )
         return self.good
