@@ -76,10 +76,13 @@ class IMIResponse(message.Response):
 
     def get_success(self) -> List[message.Outcome]:
         if self.good is None:
-            root = ET.fromString(self.payload)
-            root_status = self.get_status(root)
+            root = ET.fromstring(self.payload)
+            root_status = IMIResponse.get_status(root.attrib)
             if not any(
-                [self.status_code == requests.codes.OK, root_status.good_status()]
+                [
+                    self.status_code == requests.codes.OK,
+                    IMIResponse.good_status(root_status),
+                ]
             ):
                 self.good = []
                 return self.good
@@ -88,8 +91,8 @@ class IMIResponse(message.Response):
                 client_message_id = response.text.trim()
                 for request in response:
                     number = request.text.trim()
-                    status = self.get_status(request.attrib)
-                    if not self.good_status(status):
+                    status = IMIResponse.get_status(request.attrib)
+                    if not IMIResponse.good_status(status):
                         logger.warning("Failed to send to %s (%s)", number, status)
                         continue
 
