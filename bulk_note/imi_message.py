@@ -35,7 +35,12 @@ class IMIPayload(message.Payload):
             send_on_group = self.send_codes and self.send_codes.get(to)
             if send_on_group:
                 payload.write(f"{payload}<sendOnGroup" 'value="{self.send_on_group}"/>')
-        return f"<xiamSMS>{payload.getvalue()}</submitRequest><xiamSMS>"
+        return f"<xiamSMS>{payload.getvalue()}</submitRequest></xiamSMS>"
+
+
+@dataclass
+class IMIResponse(message.Resonse):
+    pass
 
 
 class IMIRecipients:
