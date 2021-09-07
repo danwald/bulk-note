@@ -27,25 +27,19 @@ class Response(ABC):
 
 class Recipient(ABC):
     @abstractmethod
-    def get_tx_payload(self, count: int = 1) -> Payload:
+    def get_tx_payload(self) -> Payload:
         """returns payload to send
-
-        count - number of items in payload
         """
         pass
 
     @abstractmethod
-    def get_retry_payload(self, count: int = 1) -> Payload:
+    def get_retry_payload(self) -> Payload:
         """returns retry payload to send
-
-        count - number of items in payload
         """
         pass
 
     @abstractmethod
-    def get_failure_payload(self, count: int = 1) -> Payload:
+    def get_failure_payload(self) -> Payload:
         """returns failure payload
-
-        count - number of items in payload
         """
         pass
