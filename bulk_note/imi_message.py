@@ -59,7 +59,9 @@ class IMIResponse(message.Response):
         )
 
     def bad_status(status: Status) -> bool:
-        return not all([good_status(status), retry_status(status)])
+        return not all(
+            [IMIResponse.good_status(status), IMIResponse.retry_status(status)]
+        )
 
     def unsub_status(status: Status) -> bool:
         return status.status_code in set(["88", "1050"])
