@@ -2,7 +2,7 @@
 import sys
 import click
 import requests
-from .imi_message import IMIRecipients
+from .imi_message import IMIRecipients, IMIResponse
 
 SERVER_URL = "https://74af928a-87c2-4a1e-8b5f-e23376aa9a83.mock.pstmn.io/txt-200"
 HEADERS = {"Content-type": "text/xml"}
@@ -21,9 +21,18 @@ HEADERS = {"Content-type": "text/xml"}
 @click.option("-v", "--verbose", count=True)
 def main(numbers, content, send_codes, bulk_size, verbose):
     receipients = IMIRecipients(numbers, content, send_codes, bulk_size, verbose)
-    while payload := receipients.get_tx_payload().dumps():
-        request = requests.post(SERVER_URL, data=payload, headers=HEADERS)
-
+    with open("./good.out", "w+") as good_out:
+        with open("./fail.out", "w+") as fail_out:
+            while payload := receipients.get_tx_payload().dumps():
+                try:
+                    resp = requests.post(SERVER_URL, data=payload, headers=HEADERS)
+                    print("Sent bulk")
+                except requests.HTTPError as e:
+                    print(f"Except when sending Failed to send request {e}")
+                    fail_out.write(f"{resp.text}\n")
+                else:
+                    for ir in IMIResponse("OK", resp.text).get_success():
+                        good_out.write(f"{ir}\n")
     return 0
 
 
