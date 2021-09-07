@@ -98,7 +98,7 @@ class IMIResponse(message.Response):
 
     def get_success(self) -> List[message.Outcome]:
         if self.good is None:
-            self.good = []
+            self.good = self.fail = self.retry = []
             root = ET.fromstring(self.payload)
             root_status = Status(root.attrib.get("status"))
             if not any([self.status_code == "OK", root_status.good]):
