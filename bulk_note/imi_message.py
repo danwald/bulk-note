@@ -134,7 +134,7 @@ class IMIRecipients:
         self, receipients: io.TextIO, send_groups: Optional[io.BinaryIO]
     ) -> None:
         self.receipients = filter(None, (line.trim() for line in receipients))
-        self.send_groups = pickle.load(send_groups) if send_groups else None
+        self.send_groups = pickle.load(send_groups) if send_groups else {}
 
     def get_tx_payload(self, count: int = 1) -> IMIPayload:
         pass
