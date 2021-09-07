@@ -53,6 +53,9 @@ class Status:
         self.status = status
         self.status_code = status_code
 
+    def __str__(self):
+        return f"{self.status},{self.status_code}"
+
     @property
     def good(self) -> bool:
         if self.status == "FAIL":
@@ -87,6 +90,9 @@ class IMIOutcome(Status, message.Outcome):
         self.client_message_id = client_message_id
         self.imi_message_id = imi_message_id
         super().__init__(**kwargs)
+
+    def __str__(self):
+        return f"{super().__str__()},{self.number},{self.client_message_id},{self.imi_message_id}"
 
 
 @dataclass
