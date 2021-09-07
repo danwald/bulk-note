@@ -21,6 +21,7 @@ class IMIPayload(message.Payload):
     cid = 0
     numbers: List[str]
     send_codes: Dict[str, str]
+    content: str
 
     def dumps(self) -> str:
         payload = StringIO()
@@ -141,17 +142,21 @@ class IMIRecipients:
     def __init__(
         self,
         receipients: io.TextIO,
+        content: io.TextIO,
         send_groups: Optional[io.BinaryIO],
         batch_size=10,
         verbose=0,
     ) -> None:
-        self.receipients = filter(None, (line.trim() for line in receipients))
+        self.receipients = filter(None, (line.strip() for line in receipients))
         self.send_groups = pickle.load(send_groups) if send_groups else {}
         self.batch_size = batch_size
         self.verbose = verbose
+        self.content = content.readline().strip()
 
     def get_tx_payload(self) -> IMIPayload:
-        return IMIPayload(islice(self.receipients, self.batch_size), self.send_groups)
+        return IMIPayload(
+            islice(self.receipients, self.batch_size), self.send_groups, self.content
+        )
 
     def get_retry_payload(self) -> IMIPayload:
         pass
