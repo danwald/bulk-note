@@ -1,3 +1,4 @@
+from __future__ import annotations
 import logging
 import pickle
 import xml.etree.ElementTree as ET
@@ -102,44 +103,40 @@ class IMIResponse(message.Response):
         self.payload = payload
         self.good = self.fail = self.retry = None
 
-    def get_success(self) -> List[message.Outcome]:
-        if self.good is None:
-            self.good = self.fail = self.retry = []
-            root = ET.fromstring(self.payload)
-            root_status = Status(root.attrib.get("status"))
-            if not any([self.status_code == "OK", root_status.good]):
-                return self.good
+    def process(self) -> IMIResponse:
+        self.good = self.fail = self.retry = []
+        root = ET.fromstring(self.payload)
+        root_status = Status(root.attrib.get("status"))
+        if not any([self.status_code == "OK", root_status.good]):
+            return self
 
-            for response in root:
-                client_message_id = response.attrib.get("id").strip()
-                for request in response:
-                    number = request.text.strip()
-                    request_status = Status(**request.attrib)
-                    imi_message_id = request.attrib.get("id")
-                    if not request_status.good:
-                        logger.debug(
-                            "Failed to send to %s (%s)", number, request_status
-                        )
-                        continue
-                    self.good.append(
-                        IMIOutcome(
-                            number=number,
-                            client_message_id=client_message_id,
-                            imi_message_id=imi_message_id,
-                            status=request_status.status,
-                            status_code=request_status.status_code,
-                        )
+        for response in root:
+            client_message_id = response.attrib.get("id").strip()
+            for request in response:
+                number = request.text.strip()
+                request_status = Status(**request.attrib)
+                imi_message_id = request.attrib.get("id")
+                if not request_status.good:
+                    logger.debug("Failed to send to %s (%s)", number, request_status)
+                    continue
+                self.good.append(
+                    IMIOutcome(
+                        number=number,
+                        client_message_id=client_message_id,
+                        imi_message_id=imi_message_id,
+                        status=request_status.status,
+                        status_code=request_status.status_code,
                     )
+                )
+        return self
+
+    def get_success(self) -> List[message.Outcome]:
         return self.good
 
     def get_fail(self) -> List[message.Outcome]:
-        if self.fail is None:
-            pass
         return self.fail
 
     def get_retry(self) -> List[message.Outcome]:
-        if self.retry is None:
-            pass
         return self.retry
 
 

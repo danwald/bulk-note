@@ -56,8 +56,8 @@ def test_impayload_full_dumps():
 
 
 def test_all_good_response(all_good_imi_response):
-    assert len(all_good_imi_response.get_success()) == 2
+    assert len(all_good_imi_response.process().get_success()) == 2
 
 
 def test_partial_good_response(partial_good_imi_response):
-    assert len(partial_good_imi_response.get_success()) == 1
+    assert len(partial_good_imi_response.process().get_success()) == 1

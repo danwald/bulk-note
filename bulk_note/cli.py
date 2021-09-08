@@ -36,7 +36,7 @@ def main(numbers, content, send_codes, bulk_size, verbose):
                     resp = requests.post(SERVER_URL, data=payload, headers=HEADERS)
                     resp.raise_for_status()
                     logger.debug("Sent bulk")
-                    for ir in IMIResponse("OK", resp.text).get_success():
+                    for ir in IMIResponse("OK", resp.text).process().get_get_success():
                         good_out.write(f"{ir}\n")
                 except requests.HTTPError as e:
                     logger.exception("Except when sending Failed to send request")

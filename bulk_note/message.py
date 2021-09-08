@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import ABC, abstractmethod
 
 from typing import List
@@ -12,6 +13,10 @@ class Outcome(ABC):
 
 
 class Response(ABC):
+    @abstractmethod
+    def process(self) -> Response:
+        pass
+
     @abstractmethod
     def get_success(self) -> List[Outcome]:
         pass
