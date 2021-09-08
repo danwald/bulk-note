@@ -117,7 +117,7 @@ class IMIResponse(message.Response):
                     request_status = Status(**request.attrib)
                     imi_message_id = request.attrib.get("id")
                     if not request_status.good:
-                        logger.warning(
+                        logger.debug(
                             "Failed to send to %s (%s)", number, request_status
                         )
                         continue

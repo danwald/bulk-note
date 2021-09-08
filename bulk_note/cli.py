@@ -32,13 +32,18 @@ def main(numbers, content, send_codes, bulk_size, verbose):
                 try:
                     resp = requests.post(SERVER_URL, data=payload, headers=HEADERS)
                     resp.raise_for_status()
-                    logger.info("Sent bulk")
-                except requests.HTTPError as e:
-                    logger.exception(f"Except when sending Failed to send request {e}")
-                    fail_out.write(f"{resp.text}\n")
-                else:
+                    logger.debug("Sent bulk")
                     for ir in IMIResponse("OK", resp.text).get_success():
                         good_out.write(f"{ir}\n")
+                except requests.HTTPError as e:
+                    logger.exception("Except when sending Failed to send request")
+                    fail_out.write(
+                        f"Bad Response {resp.status_code}:\n{resp.text}\n<>\n"
+                    )
+                except xml.etree.ElementTree.ParseError as p:
+                    logger.exception("XmlParsing error")
+                    fail_out.write(f"XmlParser:\n{resp.text}\n<>\n")
+
     return 0
 
 
