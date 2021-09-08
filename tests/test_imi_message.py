@@ -48,7 +48,6 @@ def test_good_statuses(code, status, expected):
 
 def test_impayload_full_dumps():
     payload = imi_message.IMIPayload(**PAYLOAD)
-    print(f"{payload.dumps()}")
     assert payload.dumps()
 
 

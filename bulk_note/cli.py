@@ -2,10 +2,13 @@
 import sys
 import click
 import requests
+import logging
 from .imi_message import IMIRecipients, IMIResponse
 
 SERVER_URL = "https://74af928a-87c2-4a1e-8b5f-e23376aa9a83.mock.pstmn.io/txt-500"
 HEADERS = {"Content-type": "text/xml"}
+
+logger = logging.getLogger(__name__)
 
 
 @click.command()
@@ -27,9 +30,9 @@ def main(numbers, content, send_codes, bulk_size, verbose):
                 try:
                     resp = requests.post(SERVER_URL, data=payload, headers=HEADERS)
                     resp.raise_for_status()
-                    print("Sent bulk")
+                    logger.info("Sent bulk")
                 except requests.HTTPError as e:
-                    print(f"Except when sending Failed to send request {e}")
+                    logger.exception(f"Except when sending Failed to send request {e}")
                     fail_out.write(f"{resp.text}\n")
                 else:
                     for ir in IMIResponse("OK", resp.text).get_success():
