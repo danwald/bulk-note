@@ -27,7 +27,7 @@ def main(numbers, content, send_codes, bulk_size, verbose):
     receipients = IMIRecipients(numbers, content, send_codes, bulk_size, verbose)
     with open("./good.out", "a") as good_out:
         with open("./fail.out", "a") as fail_out:
-            while payload := receipients.get_tx_payload().dumps():
+            while payload := receipients.get_tx_payload().dumps():  # noqa:  E231
                 time.sleep(1)
                 try:
                     resp = requests.post(SERVER_URL, data=payload, headers=HEADERS)
