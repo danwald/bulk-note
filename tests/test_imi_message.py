@@ -26,7 +26,19 @@ PARTIAL_SUCCESS_RESPONSE = """
         <result status="OK" messageId="33C3CF22" sendOnGroup="XXX" >+14165551234</result>
     </submitResponse>
     <submitResponse id="545vd69-2">
+        <result status="FAIL" statusCode="9" messageId="33C3CF23">+14165551234</result>
+    </submitResponse>
+    <submitResponse id="545vd69-2">
+        <result status="FAIL" statusCode="10" messageId="33C3CF23">+14165551234</result>
+    </submitResponse>
+    <submitResponse id="545vd69-2">
+        <result status="FAIL" statusCode="1039" messageId="33C3CF23">+14165551234</result>
+    </submitResponse>
+    <submitResponse id="545vd69-2">
         <result status="FAIL" statusCode="9999" messageId="33C3CF23">+14165551234</result>
+    </submitResponse>
+    <submitResponse id="545vd69-2">
+        <result status="FAIL" statusCode="1050" messageId="33C3CF23">+14165551234</result>
     </submitResponse>
 </xiamSMS>
 """
@@ -61,3 +73,11 @@ def test_all_good_response(all_good_imi_response):
 
 def test_partial_good_response(partial_good_imi_response):
     assert len(partial_good_imi_response.process().get_success()) == 1
+
+
+def test_partial_retry_response(partial_good_imi_response):
+    assert len(partial_good_imi_response.process().get_retry()) == 3
+
+
+def test_partial_fail_response(partial_good_imi_response):
+    assert len(partial_good_imi_response.process().get_fail()) == 2

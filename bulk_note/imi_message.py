@@ -113,13 +113,21 @@ class IMIResponse(message.Response):
         for response in root:
             client_message_id = response.attrib.get("id").strip()
             for request in response:
+                append_to = None
                 number = request.text.strip()
                 request_status = Status(**request.attrib)
                 imi_message_id = request.attrib.get("id")
                 if not request_status.good:
                     logger.debug("Failed to send to %s (%s)", number, request_status)
-                    continue
-                self.good.append(
+
+                if request_status.good:
+                    append_to = self.good
+                elif request_status.retry:
+                    append_to = self.retry
+                elif request_status.bad:
+                    append_to = self.fail
+
+                append_to.append(
                     IMIOutcome(
                         number=number,
                         client_message_id=client_message_id,
