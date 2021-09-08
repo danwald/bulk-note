@@ -2,12 +2,12 @@ import logging
 import pickle
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
-from typing import Optional, List, Dict, io, NamedTuple
 from io import StringIO
 from itertools import islice
+from typing import Dict, List, Optional, io
 
-import pytest
 from . import message
+
 
 FROM = "+121212"
 CONTENT = "foo bar"

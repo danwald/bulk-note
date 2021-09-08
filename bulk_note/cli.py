@@ -1,10 +1,13 @@
 """Console script for bulk_note."""
+import logging
 import sys
 import time
+
 import click
 import requests
-import logging
+
 from .imi_message import IMIRecipients, IMIResponse
+
 
 SERVER_URL = "https://74af928a-87c2-4a1e-8b5f-e23376aa9a83.mock.pstmn.io/txt-500"
 HEADERS = {"Content-type": "text/xml"}
