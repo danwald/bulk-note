@@ -3,7 +3,11 @@ import pytest
 from bulk_note import imi_message
 
 
-PAYLOAD = {"numbers": ["+971529492034", "+97150923823"]}
+PAYLOAD = {
+    "numbers": ["+971529492034", "+97150923823"],
+    "send_codes": {},
+    "content": "foo bar",
+}
 
 SUCCESS_RESPONSE = """
 <xiamSMS status="OK" statusText="XML contained 2 xir messages">
