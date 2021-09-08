@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from typing import List, Union
+from typing import List
 
 
 class Payload(ABC):
@@ -28,18 +28,15 @@ class Response(ABC):
 class Recipient(ABC):
     @abstractmethod
     def get_tx_payload(self) -> Payload:
-        """returns payload to send
-        """
+        """returns payload to send"""
         pass
 
     @abstractmethod
     def get_retry_payload(self) -> Payload:
-        """returns retry payload to send
-        """
+        """returns retry payload to send"""
         pass
 
     @abstractmethod
     def get_failure_payload(self) -> Payload:
-        """returns failure payload
-        """
+        """returns failure payload"""
         pass
