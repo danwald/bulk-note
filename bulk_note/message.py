@@ -35,13 +35,3 @@ class Recipient(ABC):
     def get_tx_payload(self) -> Payload:
         """returns payload to send"""
         pass
-
-    @abstractmethod
-    def get_retry_payload(self) -> Payload:
-        """returns retry payload to send"""
-        pass
-
-    @abstractmethod
-    def get_failure_payload(self) -> Payload:
-        """returns failure payload"""
-        pass

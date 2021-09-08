@@ -159,9 +159,3 @@ class IMIRecipients:
         return IMIPayload(
             islice(self.receipients, self.batch_size), self.send_groups, self.content
         )
-
-    def get_retry_payload(self) -> IMIPayload:
-        pass
-
-    def get_failure_payload(self) -> IMIPayload:
-        pass
