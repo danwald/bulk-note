@@ -1,5 +1,6 @@
 """Console script for bulk_note."""
 import sys
+import time
 import click
 import requests
 import logging
@@ -27,6 +28,7 @@ def main(numbers, content, send_codes, bulk_size, verbose):
     with open("./good.out", "w+") as good_out:
         with open("./fail.out", "w+") as fail_out:
             while payload := receipients.get_tx_payload().dumps():
+                time.sleep(1)
                 try:
                     resp = requests.post(SERVER_URL, data=payload, headers=HEADERS)
                     resp.raise_for_status()
