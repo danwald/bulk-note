@@ -62,7 +62,7 @@ class Status:
         if self.status == "FAIL":
             return False
         else:
-            return any([self.status in set(["OK"]), self.status_code in set(["0"])])
+            return all([self.status in set(["OK"]), self.status_code in set(["0"])])
 
     @property
     def retry(self) -> bool:
