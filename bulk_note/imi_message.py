@@ -67,7 +67,17 @@ class Status:
     @property
     def retry(self) -> bool:
         return all(
-            [self.status in set(["FAIL"]), self.status_code in set(["9", "10", "1039"])]
+            [
+                self.status in set(["FAIL"]),
+                self.status_code
+                in set(
+                    [
+                        "9",
+                        "11",
+                        "88",
+                    ]
+                ),
+            ]
         )
 
     @property
