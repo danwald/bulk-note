@@ -86,7 +86,7 @@ class Status:
 
     @property
     def unsubscribe(self) -> bool:
-        return self.status_code in set(["88", "1050"])
+        return self.status_code in set(["11", "1050"])
 
 
 class IMIOutcome(Status, message.Outcome):
