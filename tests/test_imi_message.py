@@ -56,10 +56,31 @@ def partial_good_imi_response():
 
 @pytest.mark.parametrize(
     "code, status, expected",
-    [("OK", "0", True), ("", "0", True), ("OK", "", True), ("FAIL", "0", False)],
+    [("OK", "0", True), ("", "0", False), ("OK", "", False), ("FAIL", "0", False)],
 )
 def test_good_statuses(code, status, expected):
     assert imi_message.Status(code, status).good == expected
+
+
+@pytest.mark.parametrize(
+    "code, status, expected",
+    [("FAIL", "9", True), ("FAIL", "11", True), ("FAIL", "88", True)],
+)
+def test_retry_statuses(code, status, expected):
+    assert imi_message.Status(code, status).retry == expected
+
+
+@pytest.mark.parametrize(
+    "code, status, expected",
+    [
+        ("FAIL", "0", True),
+        ("OK", "X", True),
+        ("FAIL", "1042", True),
+        ("FAIL", "1050", True),
+    ],
+)
+def test_bad_statuses(code, status, expected):
+    assert imi_message.Status(code, status).bad == expected
 
 
 def test_impayload_full_dumps():
