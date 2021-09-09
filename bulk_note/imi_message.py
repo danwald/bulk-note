@@ -72,7 +72,7 @@ class Status:
 
     @property
     def bad(self) -> bool:
-        return not all([self.good, self.retry])
+        return not any([self.good, self.retry])
 
     @property
     def unsubscribe(self) -> bool:
