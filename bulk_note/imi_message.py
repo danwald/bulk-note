@@ -50,9 +50,14 @@ class IMIPayload(message.Payload):
 
 
 class Status:
+    @staticmethod
+    def get_status_code(status_code, kwargs):
+        xml_code = kwargs.pop("statusCode", None)
+        return xml_code or status_code
+
     def __init__(self, status: str = "", status_code: str = "0", **kwargs):
         self.status = status
-        self.status_code = status_code
+        self.status_code = self.get_status_code(status_code, kwargs)
 
     def __str__(self):
         return f"{self.status},{self.status_code}"

@@ -29,13 +29,13 @@ PARTIAL_SUCCESS_RESPONSE = """
         <result status="FAIL" statusCode="9" messageId="33C3CF23">+14165551234</result>
     </submitResponse>
     <submitResponse id="545vd69-2">
-        <result status="FAIL" statusCode="10" messageId="33C3CF23">+14165551234</result>
+        <result status="FAIL" statusCode="11" messageId="33C3CF23">+14165551234</result>
     </submitResponse>
     <submitResponse id="545vd69-2">
         <result status="FAIL" statusCode="1039" messageId="33C3CF23">+14165551234</result>
     </submitResponse>
     <submitResponse id="545vd69-2">
-        <result status="FAIL" statusCode="9999" messageId="33C3CF23">+14165551234</result>
+        <result status="FAIL" statusCode="88" messageId="33C3CF23">+14165551234</result>
     </submitResponse>
     <submitResponse id="545vd69-2">
         <result status="FAIL" statusCode="1050" messageId="33C3CF23">+14165551234</result>
