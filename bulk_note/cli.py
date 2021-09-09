@@ -3,6 +3,8 @@ import logging
 import sys
 import time
 
+import xml
+
 import click
 import requests
 
@@ -38,12 +40,12 @@ def main(numbers, content, send_codes, bulk_size, verbose):
                     logger.debug("Sent bulk")
                     for ir in IMIResponse("OK", resp.text).process().get_get_success():
                         good_out.write(f"{ir}\n")
-                except requests.HTTPError as e:
+                except requests.HTTPError as e:  # noqa F821
                     logger.exception("Except when sending Failed to send request")
                     fail_out.write(
                         f"Bad Response {resp.status_code}:\n{resp.text}\n<>\n"
                     )
-                except xml.etree.ElementTree.ParseError as p:
+                except xml.etree.ElementTree.ParseError as p:  # noqa F821
                     logger.exception("XmlParsing error")
                     fail_out.write(f"XmlParser:\n{resp.text}\n<>\n")
 
