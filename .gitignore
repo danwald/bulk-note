@@ -106,3 +106,5 @@ ENV/
 
 .pre-commit-config.yaml
 .*.swp
+
+data/
