@@ -126,7 +126,7 @@ class IMIResponse(message.Response):
         root = ET.fromstring(self.payload)
         root_status = Status(root.attrib.get("status"))
         if not any([self.status_code == Status.OK, root_status.good]):
-            return self
+            return self  # pragma: no cover
 
         for response in root:
             client_message_id = response.attrib.get("id").strip()

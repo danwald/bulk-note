@@ -1,6 +1,6 @@
 import pytest
 
-from bulk_note.imi_message import IMIPayload, IMIResponse, Status
+from bulk_note.imi_message import IMIOutcome, IMIPayload, IMIResponse, Status
 
 PAYLOAD = {
     "numbers": ["+971529492034", "+97150923823"],
@@ -85,6 +85,33 @@ def test_retry_statuses(code, status, expected):
 )
 def test_bad_statuses(code, status, expected):
     assert Status(code, status).bad == expected
+
+
+@pytest.mark.parametrize(
+    "code, status, expected",
+    [(Status.OK, "11", True), (Status.OK, "1050", True), (Status.OK, "0", False)],
+)
+def test_unsubscribe_statuses(code, status, expected):
+    assert Status(code, status).unsubscribe == expected
+
+
+def test_status_str():
+    assert str(Status(Status.OK, "0")) == "OK,0"
+
+
+def test_imioutcome_str():
+    assert (
+        str(
+            IMIOutcome(
+                "+19999999",
+                "2021-09-10-00001",
+                "FooBar",
+                status=Status.OK,
+                status_code="0",
+            )
+        )
+        == "OK,0,+19999999,2021-09-10-00001,FooBar"
+    )
 
 
 def test_impayload_full_dumps():
