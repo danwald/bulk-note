@@ -8,11 +8,8 @@ from itertools import islice
 from typing import Dict, List, Optional, io
 
 from . import message
+from . import settings
 
-
-FROM = "+121212"
-CONTENT = "foo bar"
-CID_PREFIX = "2021-09-07"
 
 logger = logging.getLogger(__name__)
 
@@ -29,8 +26,8 @@ class IMIPayload(message.Payload):
         for to in self.numbers:
             payload.write(
                 (
-                    f'<submitRequest id="{CID_PREFIX}_{IMIPayload.cid:07}">'
-                    f"<from>{FROM}</from>"
+                    f'<submitRequest id="{settings.CID_PREFIX}_{IMIPayload.cid:07}">'
+                    f"<from>{settings.FROM}</from>"
                     f"<to>{to}</to>"
                     f'<content type="text">{self.content}</content>'
                     f'<sendOnGroup value=""/>'
