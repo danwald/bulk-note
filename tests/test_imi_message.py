@@ -1,7 +1,6 @@
 import pytest
 
-from bulk_note import imi_message
-
+from bulk_note.imi_message import IMIPayload, IMIResponse, Status
 
 PAYLOAD = {
     "numbers": ["+971529492034", "+97150923823"],
@@ -46,45 +45,50 @@ PARTIAL_SUCCESS_RESPONSE = """
 
 @pytest.fixture
 def all_good_imi_response():
-    return imi_message.IMIResponse("OK", SUCCESS_RESPONSE)
+    return IMIResponse(Status.OK, SUCCESS_RESPONSE)
 
 
 @pytest.fixture
 def partial_good_imi_response():
-    return imi_message.IMIResponse("OK", PARTIAL_SUCCESS_RESPONSE)
-
-
-@pytest.mark.parametrize(
-    "code, status, expected",
-    [("OK", "0", True), ("", "0", False), ("OK", "", False), ("FAIL", "0", False)],
-)
-def test_good_statuses(code, status, expected):
-    assert imi_message.Status(code, status).good == expected
-
-
-@pytest.mark.parametrize(
-    "code, status, expected",
-    [("FAIL", "9", True), ("FAIL", "11", True), ("FAIL", "88", True)],
-)
-def test_retry_statuses(code, status, expected):
-    assert imi_message.Status(code, status).retry == expected
+    return IMIResponse(Status.OK, PARTIAL_SUCCESS_RESPONSE)
 
 
 @pytest.mark.parametrize(
     "code, status, expected",
     [
-        ("FAIL", "0", True),
-        ("OK", "X", True),
-        ("FAIL", "1042", True),
-        ("FAIL", "1050", True),
+        (Status.OK, "0", True),
+        ("", "0", False),
+        (Status.OK, "", False),
+        (Status.FAIL, "0", False),
+    ],
+)
+def test_good_statuses(code, status, expected):
+    assert Status(code, status).good == expected
+
+
+@pytest.mark.parametrize(
+    "code, status, expected",
+    [(Status.FAIL, "9", True), (Status.FAIL, "11", True), (Status.FAIL, "88", True)],
+)
+def test_retry_statuses(code, status, expected):
+    assert Status(code, status).retry == expected
+
+
+@pytest.mark.parametrize(
+    "code, status, expected",
+    [
+        (Status.FAIL, "0", True),
+        (Status.OK, "X", True),
+        (Status.FAIL, "1042", True),
+        (Status.FAIL, "1050", True),
     ],
 )
 def test_bad_statuses(code, status, expected):
-    assert imi_message.Status(code, status).bad == expected
+    assert Status(code, status).bad == expected
 
 
 def test_impayload_full_dumps():
-    payload = imi_message.IMIPayload(**PAYLOAD)
+    payload = IMIPayload(**PAYLOAD)
     assert payload.dumps()
 
 

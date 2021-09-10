@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import logging
 import pickle
 import xml.etree.ElementTree as ET
@@ -7,9 +8,7 @@ from io import StringIO
 from itertools import islice
 from typing import Dict, List, Optional, io
 
-from . import message
-from . import settings
-
+from . import message, settings
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +46,9 @@ class IMIPayload(message.Payload):
 
 
 class Status:
+    OK = "OK"
+    FAIL = "FAIL"
+
     @staticmethod
     def get_status_code(status_code, kwargs):
         xml_code = kwargs.pop("statusCode", None)
@@ -61,16 +63,18 @@ class Status:
 
     @property
     def good(self) -> bool:
-        if self.status == "FAIL":
+        if self.status == Status.FAIL:
             return False
         else:
-            return all([self.status in set(["OK"]), self.status_code in set(["0"])])
+            return all(
+                [self.status in set([Status.OK]), self.status_code in set(["0"])]
+            )
 
     @property
     def retry(self) -> bool:
         return all(
             [
-                self.status in set(["FAIL"]),
+                self.status in set([Status.FAIL]),
                 self.status_code
                 in set(
                     [
@@ -121,7 +125,7 @@ class IMIResponse(message.Response):
         self.retry = []
         root = ET.fromstring(self.payload)
         root_status = Status(root.attrib.get("status"))
-        if not any([self.status_code == "OK", root_status.good]):
+        if not any([self.status_code == Status.OK, root_status.good]):
             return self
 
         for response in root:

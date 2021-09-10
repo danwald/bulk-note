@@ -7,12 +7,8 @@ import xml
 import click
 import requests
 
-from .imi_message import IMIRecipients, IMIResponse
-
-SERVER_URL = (
-    "https://74af928a-87c2-4a1e-8b5f-e23376aa9a83.mock.pstmn.io/txt-200-partial"
-)
-HEADERS = {"Content-type": "text/xml"}
+from . import settings
+from .imi_message import IMIRecipients, IMIResponse, Status
 
 logger = logging.getLogger(__name__)
 
@@ -31,16 +27,20 @@ logger = logging.getLogger(__name__)
 def main(numbers, content, send_codes, bulk_size, verbose):
     good_count = retry_count = fail_count = 0
     receipients = IMIRecipients(numbers, content, send_codes, bulk_size, verbose)
-    with open("./good.out", "a") as good_out, open("./fail.out", "a") as fail_out, open(
-        "./retry.out", "a"
-    ) as retry_out:
+    with open(settings.GOOD_OUT, "a") as good_out, open(
+        settings.FAIL_OUT, "a"
+    ) as fail_out, open(settings.RETRY_OUT, "a") as retry_out:
         while payload := receipients.get_tx_payload().dumps():  # noqa:  E231
             time.sleep(1)
             try:
-                resp = requests.post(SERVER_URL, data=payload, headers=HEADERS)
+                resp = requests.post(
+                    settings.SERVER_URL,
+                    data=payload,
+                    headers={"Content-type": "text/xml"},
+                )
                 resp.raise_for_status()
                 logger.debug("Sent bulk")
-                processed = IMIResponse("OK", resp.text).process()
+                processed = IMIResponse(Status.OK, resp.text).process()
                 for ok in processed.get_success():
                     good_out.write(f"{ok}\n")
                     good_count += 1
