@@ -25,7 +25,7 @@ class IMIPayload(message.Payload):
         for to in self.numbers:
             payload.write(
                 (
-                    f'<submitRequest id="{settings.CID_PREFIX}_{IMIPayload.cid:07}">'
+                    f'<submitRequest id="{settings.RUN_PREFIX}_{IMIPayload.cid:07}">'
                     f"<from>{settings.FROM}</from>"
                     f"<to>{to}</to>"
                     f'<content type="text">{self.content}</content>'
