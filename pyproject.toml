@@ -12,8 +12,8 @@ authors = [
 ]
 license = {text = "GNU General Public License v3"}
 dependencies = [
-    "click>=7.0",
-    "requests>=2.26.0",
+    "click",
+    "requests",
 ]
 
 [project.scripts]
@@ -24,9 +24,9 @@ collect_ignore = ["setup.py"]
 
 [dependency-groups]
 dev = [
-    "black>=26.3.1",
-    "coverage>=7.13.5",
-    "flake8>=7.3.0",
-    "pre-commit>=4.5.1",
-    "pytest>=9.0.2",
+    "black",
+    "coverage",
+    "flake8",
+    "pre-commit",
+    "pytest",
 ]

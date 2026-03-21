@@ -54,17 +54,17 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "click", specifier = ">=7.0" },
-    { name = "requests", specifier = ">=2.26.0" },
+    { name = "click" },
+    { name = "requests" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "black", specifier = ">=26.3.1" },
-    { name = "coverage", specifier = ">=7.13.5" },
-    { name = "flake8", specifier = ">=7.3.0" },
-    { name = "pre-commit", specifier = ">=4.5.1" },
-    { name = "pytest", specifier = ">=9.0.2" },
+    { name = "black" },
+    { name = "coverage" },
+    { name = "flake8" },
+    { name = "pre-commit" },
+    { name = "pytest" },
 ]
 
 [[package]]
