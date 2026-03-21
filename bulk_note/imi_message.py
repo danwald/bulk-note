@@ -6,7 +6,8 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from io import StringIO
 from itertools import islice
-from typing import Dict, List, Optional, io
+import io
+from typing import Dict, List, Optional
 
 from . import message, settings
 
