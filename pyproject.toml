@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "bulk_note"
-version = "0.1.0"
+version = "0.2.0"
 description = "send bulk messages via api"
 requires-python = ">=3.12"
 authors = [
